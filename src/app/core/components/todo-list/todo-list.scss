@@ -1,0 +1,89 @@
+.todo-list-form {
+  margin-block-start: 1rem;
+
+  .right-gap-10 {
+    margin-inline-end: 10px;
+  }
+
+  input {
+    padding: 0.5rem;
+    border-radius: 10px;
+  }
+}
+
+.green-btn {
+  background-color: var(--green-500);
+  color: var(--pure-white);
+}
+
+.cta-btn {
+  width: 10rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cta-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.todo-list-table th,
+.todo-list-table td {
+  border: 1px solid var(--grey-300);
+  padding: 10px;
+  text-align: center;
+}
+
+.todo-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  .delete-btn {
+    background-color: var(--red-200);
+    color: var(--pure-white);
+  }
+}
+
+.interact-outside {
+  position: fixed;
+  inset: 0;
+  background: var(--semi-transparent-black);
+  z-index: 1;
+}
+
+.task-edit-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 30rem;
+  transform: translate(-50%, -50%);
+  background: var(--pure-white);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  z-index: 1;
+
+  .modal-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .field {
+    display: grid;
+    gap: 5px;
+
+    input {
+      padding: 10px;
+      border: 1px solid var(--grey-300);
+      border-radius: 1rem;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-start: 5px;
+    gap: 10px;
+  }
+}

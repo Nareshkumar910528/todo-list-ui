@@ -1,0 +1,68 @@
+<form [formGroup]="addTaskForm" (ngSubmit)="onAddNewTask()" class="todo-list-form">
+  <input class="right-gap-10" type="text" formControlName="task" placeholder=" Add a task" />
+  <button type="submit" class="cta-btn green-btn" [disabled]="addTaskForm.invalid">Add New Task</button>
+</form>
+
+<table class="todo-list-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Task</th>
+      <th>Frequency</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- 
+    'track' is used to optimize the rendering of list items by tracking them with a unique identifier. 
+    Helps to efficiently update the DOM when the list changes, as it can identify which items have been added, removed, or moved. 
+    -->
+    @for (data of todoListStore.taskListing(); track data.id) {
+    <tr>
+      <td>{{ data.id }}</td>
+      <td>{{ data.task }}</td>
+      <td>{{ data.taskFrequency }}</td>
+
+      <td>
+        <button type="button" class="cta-btn" (click)="onEditCurrentTask(data.id)">
+          Edit
+        </button>
+      </td>
+
+      <td>
+        <button type="button" class="cta-btn delete-btn" (click)="onDeleteTask(data.id)">
+          Delete
+        </button>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+@if (todoListStore.isTaskEditingModalOpened()) {
+<!-- tabindex="0" is added to make the div focusable and accessible via keyboard -->
+<div class="interact-outside" (window:keydown.escape)="onInteractOutsideOfModal()" tabindex="0" role="button"></div>
+
+<div class="task-edit-modal">
+  <h3 class="modal-title">Edit Task</h3>
+
+  <form class="modal-form" [formGroup]="editTaskForm" (ngSubmit)="onSaveEditedTask()">
+    <label class="field">
+      <span class="label">Task</span>
+      <input type="text" formControlName="task" placeholder="Task" />
+    </label>
+
+    <label class="field">
+      <span class="label">Frequency</span>
+      <input type="number" formControlName="frequency" placeholder="Frequency" min="0" />
+    </label>
+
+    <div class="modal-actions">
+      <button type="button" class="cta-btn" (click)="onDropTaskEditing()">Cancel</button>
+      <button type="submit" class="cta-btn green-btn" [disabled]="editTaskForm.invalid">Save</button>
+    </div>
+  </form>
+</div>
+}
