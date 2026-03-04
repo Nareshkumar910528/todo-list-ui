@@ -5,6 +5,7 @@ interface TodoListDetail {
   id: string;
   task: string | null;
   taskFrequency: number;
+  status: 'pending' | 'in-progress' | 'completed';
 }
 
 interface TTodoListState {
@@ -12,6 +13,7 @@ interface TTodoListState {
   isTaskEditingModalOpened: boolean;
   idOfTaskBeingEdited: string | null;
   loaded: boolean;
+  frequencyIndex: number;
 }
 
 const initialState: TTodoListState = {
@@ -19,6 +21,7 @@ const initialState: TTodoListState = {
   isTaskEditingModalOpened: false,
   idOfTaskBeingEdited: null,
   loaded: false,
+  frequencyIndex: 0,
 };
 
 export const TodoListStore = signalStore(
@@ -26,20 +29,25 @@ export const TodoListStore = signalStore(
 
   withMethods((store) => ({
     /** CREATE */
-    addTodoTask(task: string) {
+    addTodoTask(task: string, status: "pending" | "in-progress" | "completed") {
       if (!task) return false;
 
-      const frequency = store.taskListing().length + 1;
+      /** find the max frequency and add 1 to it */
+      const frequency = Math.max(...store.taskListing().map((data) => data.taskFrequency)) + 1;
 
       const itemToAdd: TodoListDetail = {
         /** to shorten the UUID */
         id: crypto.randomUUID().split('-')[0].toUpperCase(),
         task: task,
+        status: status,
         taskFrequency: frequency,
       };
+
       patchState(store, {
         taskListing: [...store.taskListing(), itemToAdd],
+        frequencyIndex: frequency 
       });
+
       return true;
     },
 
@@ -48,24 +56,25 @@ export const TodoListStore = signalStore(
       if (store.loaded()) return;
 
       const initialTasks: TodoListDetail[] = [
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'walk', taskFrequency: 1 },
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'read', taskFrequency: 2 },
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'cook', taskFrequency: 3 },
+        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'walk', status: 'pending', taskFrequency: 1 },
+        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'read', status: 'in-progress', taskFrequency: 2 },
+        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'cook', status: 'completed', taskFrequency: 3 },
       ];
 
       patchState(store, {
         taskListing: initialTasks,
         loaded: true,
+        frequencyIndex: initialTasks.length,
       });
     },
 
     /** UPDATE */
-    saveEditedTask(task: string, frequency: number) {
+    saveEditedTask(task: string, status: "pending" | "in-progress" | "completed", frequency: number) {
       const updatedTasksList = store.taskListing().map((data) => {
         /** Check if the current item is the one being edited */
         if (data.id === store.idOfTaskBeingEdited()) {
           /** override with new values */
-          return { ...data, task: task, taskFrequency: frequency };
+          return { ...data, task: task, status: status, taskFrequency: frequency };
         }
         return data;
       });
@@ -74,6 +83,7 @@ export const TodoListStore = signalStore(
         taskListing: updatedTasksList,
         isTaskEditingModalOpened: false,
         idOfTaskBeingEdited: null,
+        frequencyIndex: frequency,
       });
     },
 

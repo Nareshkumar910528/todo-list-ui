@@ -1,5 +1,13 @@
 <form [formGroup]="addTaskForm" (ngSubmit)="onAddNewTask()" class="todo-list-form">
   <input class="right-gap-10" type="text" formControlName="task" placeholder=" Add a task" />
+
+  <select class="right-gap-10" formControlName="status">
+    <option value="" disabled selected>Select status</option>
+    <option value="pending">Pending</option>
+    <option value="in-progress">In Progress</option>
+    <option value="completed">Completed</option>
+  </select>
+
   <button type="submit" class="cta-btn green-btn" [disabled]="addTaskForm.invalid">Add New Task</button>
 </form>
 
@@ -9,6 +17,7 @@
       <th>ID</th>
       <th>Task</th>
       <th>Frequency</th>
+      <th>Status</th>
       <th>Edit</th>
       <th>Delete</th>
     </tr>
@@ -24,6 +33,7 @@
       <td>{{ data.id }}</td>
       <td>{{ data.task }}</td>
       <td>{{ data.taskFrequency }}</td>
+      <td>{{ data.status }}</td>
 
       <td>
         <button type="button" class="cta-btn" (click)="onEditCurrentTask(data.id)">
@@ -52,6 +62,16 @@
     <label class="field">
       <span class="label">Task</span>
       <input type="text" formControlName="task" placeholder="Task" />
+    </label>
+
+    <label class="field">
+      <span class="label">Status</span>
+      <select formControlName="status">
+        <option value="" disabled selected>Select status</option>
+        <option value="pending">Pending</option>
+        <option value="in-progress">In Progress</option>
+        <option value="completed">Completed</option>
+      </select>
     </label>
 
     <label class="field">

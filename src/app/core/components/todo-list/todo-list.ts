@@ -21,11 +21,19 @@ export class TodoList {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    status: new FormControl<"" | "pending" | "in-progress" | "completed">('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   });
 
   /** handle editing current task form control */
   editTaskForm = new FormGroup({
     task: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    status: new FormControl<"pending" | "in-progress" | "completed">('pending', {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -48,6 +56,7 @@ export class TodoList {
         if (taskDetails) {
           this.editTaskForm.patchValue({
             task: taskDetails.task ?? '',
+            status: taskDetails.status ?? '',
             frequency: taskDetails.taskFrequency ?? 0,
           });
         }
@@ -59,12 +68,13 @@ export class TodoList {
     if (this.addTaskForm.invalid) return;
 
     const taskValue = this.addTaskForm.controls.task.value;
+    const statusValue = this.addTaskForm.controls.status.value;
 
-    if (taskValue) {
-      const isTaskAdded = this.todoListStore.addTodoTask(taskValue);
+    if (taskValue && statusValue) {
+      const isTaskAdded = this.todoListStore.addTodoTask(taskValue, statusValue);
 
       if (isTaskAdded) {
-        this.addTaskForm.reset({ task: '' });
+        this.addTaskForm.reset({ task: '', status: '' });
       }
     }
   }
@@ -81,9 +91,10 @@ export class TodoList {
     if (!this.editTaskForm.valid) return;
 
     const task = this.editTaskForm.controls.task.value;
+    const status = this.editTaskForm.controls.status.value;
     const frequency = this.editTaskForm.controls.frequency.value;
 
-    this.todoListStore.saveEditedTask(task, frequency);
+    this.todoListStore.saveEditedTask(task, status, frequency);
   }
 
   onDeleteTask(taskId: string) {

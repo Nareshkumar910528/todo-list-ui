@@ -53,6 +53,12 @@
   z-index: 1;
 }
 
+select {
+  padding: 8px;
+  border-radius: 1rem;
+  border: 1px solid var(--grey-310);
+}
+
 .task-edit-modal {
   position: fixed;
   top: 50%;
