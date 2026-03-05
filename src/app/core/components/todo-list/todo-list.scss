@@ -1,8 +1,16 @@
 .todo-list-form {
   margin-block-start: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
   .right-gap-10 {
     margin-inline-end: 10px;
+  }
+
+  .right-gap-20 {
+    margin-inline-end: 20px;
   }
 
   input {

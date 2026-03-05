@@ -14,6 +14,14 @@ interface TTodoListState {
   idOfTaskBeingEdited: string | null;
   loaded: boolean;
   frequencyIndex: number;
+
+  /** Task Statistics */
+  taskStatistics: {
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+  };
 }
 
 const initialState: TTodoListState = {
@@ -22,6 +30,12 @@ const initialState: TTodoListState = {
   idOfTaskBeingEdited: null,
   loaded: false,
   frequencyIndex: 0,
+  taskStatistics: {
+    total: 0,
+    pending: 0,
+    inProgress: 0,
+    completed: 0,
+  },
 };
 
 export const TodoListStore = signalStore(
@@ -29,8 +43,8 @@ export const TodoListStore = signalStore(
 
   withMethods((store) => ({
     /** CREATE */
-    addTodoTask(task: string, status: "pending" | "in-progress" | "completed") {
-      if (!task) return false;
+    addTodoTask(task: string, status: 'pending' | 'in-progress' | 'completed') {
+      if (!task && !status) return false;
 
       /** find the max frequency and add 1 to it */
       const frequency = Math.max(...store.taskListing().map((data) => data.taskFrequency)) + 1;
@@ -45,7 +59,22 @@ export const TodoListStore = signalStore(
 
       patchState(store, {
         taskListing: [...store.taskListing(), itemToAdd],
-        frequencyIndex: frequency 
+        frequencyIndex: frequency,
+        taskStatistics: {
+          total: store.taskListing().length + 1,
+          pending:
+            status === 'pending'
+              ? store.taskStatistics().pending + 1
+              : store.taskStatistics().pending,
+          inProgress:
+            status === 'in-progress'
+              ? store.taskStatistics().inProgress + 1
+              : store.taskStatistics().inProgress,
+          completed:
+            status === 'completed'
+              ? store.taskStatistics().completed + 1
+              : store.taskStatistics().completed,
+        },
       });
 
       return true;
@@ -56,20 +85,45 @@ export const TodoListStore = signalStore(
       if (store.loaded()) return;
 
       const initialTasks: TodoListDetail[] = [
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'walk', status: 'pending', taskFrequency: 1 },
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'read', status: 'in-progress', taskFrequency: 2 },
-        { id: crypto.randomUUID().split('-')[0].toUpperCase(), task: 'cook', status: 'completed', taskFrequency: 3 },
+        {
+          id: crypto.randomUUID().split('-')[0].toUpperCase(),
+          task: 'walk',
+          status: 'pending',
+          taskFrequency: 1,
+        },
+        {
+          id: crypto.randomUUID().split('-')[0].toUpperCase(),
+          task: 'read',
+          status: 'in-progress',
+          taskFrequency: 2,
+        },
+        {
+          id: crypto.randomUUID().split('-')[0].toUpperCase(),
+          task: 'cook',
+          status: 'completed',
+          taskFrequency: 3,
+        },
       ];
 
       patchState(store, {
         taskListing: initialTasks,
         loaded: true,
         frequencyIndex: initialTasks.length,
+        taskStatistics: {
+          total: initialTasks.length,
+          pending: initialTasks.filter((data) => data.status === 'pending').length,
+          inProgress: initialTasks.filter((data) => data.status === 'in-progress').length,
+          completed: initialTasks.filter((data) => data.status === 'completed').length,
+        },
       });
     },
 
     /** UPDATE */
-    saveEditedTask(task: string, status: "pending" | "in-progress" | "completed", frequency: number) {
+    saveEditedTask(
+      task: string,
+      status: 'pending' | 'in-progress' | 'completed',
+      frequency: number,
+    ) {
       const updatedTasksList = store.taskListing().map((data) => {
         /** Check if the current item is the one being edited */
         if (data.id === store.idOfTaskBeingEdited()) {
@@ -84,12 +138,35 @@ export const TodoListStore = signalStore(
         isTaskEditingModalOpened: false,
         idOfTaskBeingEdited: null,
         frequencyIndex: frequency,
+        taskStatistics: {
+          total: store.taskListing().length,
+          pending: store.taskListing().filter((data) => data.status === 'pending').length,
+          inProgress: store.taskListing().filter((data) => data.status === 'in-progress').length,
+          completed: store.taskListing().filter((data) => data.status === 'completed').length,
+        },
       });
     },
 
     /** DELETE */
-    deleteExistingTask(taskId: string) {
-      patchState(store, { taskListing: store.taskListing().filter((data) => data.id !== taskId) });
+    deleteExistingTask(taskId: string, status: 'pending' | 'in-progress' | 'completed') {
+      patchState(store, {
+        taskListing: store.taskListing().filter((data) => data.id !== taskId),
+        taskStatistics: {
+          total: store.taskListing().length - 1,
+          pending:
+            status === 'pending'
+              ? store.taskStatistics().pending - 1
+              : store.taskStatistics().pending,
+          inProgress:
+            status === 'in-progress'
+              ? store.taskStatistics().inProgress - 1
+              : store.taskStatistics().inProgress,
+          completed:
+            status === 'completed'
+              ? store.taskStatistics().completed - 1
+              : store.taskStatistics().completed,
+        },
+      });
     },
 
     openTaskEditingModal(itemId: string) {

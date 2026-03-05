@@ -1,14 +1,24 @@
 <form [formGroup]="addTaskForm" (ngSubmit)="onAddNewTask()" class="todo-list-form">
-  <input class="right-gap-10" type="text" formControlName="task" placeholder=" Add a task" />
+  <div>
+    <input class="right-gap-10" type="text" formControlName="task" placeholder=" Add a task" />
 
-  <select class="right-gap-10" formControlName="status">
-    <option value="" disabled selected>Select status</option>
-    <option value="pending">Pending</option>
-    <option value="in-progress">In Progress</option>
-    <option value="completed">Completed</option>
-  </select>
+    <select class="right-gap-10" formControlName="status">
+      <option value="" disabled selected>Select status</option>
+      <option value="pending">Pending</option>
+      <option value="in-progress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
 
-  <button type="submit" class="cta-btn green-btn" [disabled]="addTaskForm.invalid">Add New Task</button>
+    <button type="submit" class="cta-btn green-btn" [disabled]="addTaskForm.invalid">Add New Task</button>
+  </div>
+
+  <div>
+    <span class="right-gap-20">Total: {{ todoListStore.taskStatistics().total }}</span>
+    <span class="right-gap-20">Pending: {{ todoListStore.taskStatistics().pending }}</span>
+    <span class="right-gap-20">In Progress: {{ todoListStore.taskStatistics().inProgress }}</span>
+    <span class="right-gap-10">Completed: {{ todoListStore.taskStatistics().completed }}</span>
+  </div>
+
 </form>
 
 <table class="todo-list-table">
@@ -42,7 +52,7 @@
       </td>
 
       <td>
-        <button type="button" class="cta-btn delete-btn" (click)="onDeleteTask(data.id)">
+        <button type="button" class="cta-btn delete-btn" (click)="onDeleteTask(data.id, data.status)">
           Delete
         </button>
       </td>

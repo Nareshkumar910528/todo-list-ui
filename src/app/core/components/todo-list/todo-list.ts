@@ -97,8 +97,8 @@ export class TodoList {
     this.todoListStore.saveEditedTask(task, status, frequency);
   }
 
-  onDeleteTask(taskId: string) {
-    this.todoListStore.deleteExistingTask(taskId);
+  onDeleteTask(taskId: string, status: 'pending' | 'in-progress' | 'completed') {
+    this.todoListStore.deleteExistingTask(taskId, status);
   }
 
   onInteractOutsideOfModal() {
