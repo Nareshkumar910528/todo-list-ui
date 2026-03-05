@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
-import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
+import { computed } from '@angular/core';
+import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 
 interface TodoListDetail {
   id: string;
@@ -14,6 +15,7 @@ interface TTodoListState {
   idOfTaskBeingEdited: string | null;
   loaded: boolean;
   frequencyIndex: number;
+  filteredStatus: "" | "pending" | "in-progress" | "completed";
 
   /** Task Statistics */
   taskStatistics: {
@@ -30,6 +32,7 @@ const initialState: TTodoListState = {
   idOfTaskBeingEdited: null,
   loaded: false,
   frequencyIndex: 0,
+  filteredStatus: '',
   taskStatistics: {
     total: 0,
     pending: 0,
@@ -182,6 +185,20 @@ export const TodoListStore = signalStore(
         idOfTaskBeingEdited: null,
       });
     },
+
+    setFilteredStatus(status: "" | "pending" | "in-progress" | "completed"): void {
+      patchState(store, { filteredStatus: status });
+    },
+  })),
+
+  withComputed((store) => ({
+    filteredTaskBasedOnStatus: computed(() => {
+      const tasks = store.taskListing();
+      const status = store.filteredStatus();
+
+      if (!status) return tasks;
+      return tasks.filter((data) => data.status === status);
+    }),
   })),
 
   withHooks({

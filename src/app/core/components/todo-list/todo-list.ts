@@ -43,6 +43,12 @@ export class TodoList {
     }),
   });
 
+  statusFilterForm = new FormGroup({
+    filteredStatus: new FormControl<"" | "pending" | "in-progress" | "completed">('', {
+      nonNullable: true,
+    }),
+  });
+
   constructor() {
     /** set the current task details in the edit form when the edit modal is opened */
     effect(() => {
@@ -99,6 +105,11 @@ export class TodoList {
 
   onDeleteTask(taskId: string, status: 'pending' | 'in-progress' | 'completed') {
     this.todoListStore.deleteExistingTask(taskId, status);
+  }
+
+  onFilterTasks() {
+    const status = this.statusFilterForm.controls.filteredStatus.value;
+    this.todoListStore.setFilteredStatus(status);
   }
 
   onInteractOutsideOfModal() {

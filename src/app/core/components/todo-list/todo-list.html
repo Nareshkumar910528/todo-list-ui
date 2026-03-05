@@ -18,7 +18,18 @@
     <span class="right-gap-20">In Progress: {{ todoListStore.taskStatistics().inProgress }}</span>
     <span class="right-gap-10">Completed: {{ todoListStore.taskStatistics().completed }}</span>
   </div>
+</form>
 
+<form [formGroup]="statusFilterForm" class="filtered-status">
+  <label class="field">
+    <span class="label right-gap-10">Filter by Status</span>
+    <select formControlName="filteredStatus" (change)="onFilterTasks()">
+      <option value="">All</option>
+      <option value="pending">Pending</option>
+      <option value="in-progress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
+  </label>
 </form>
 
 <table class="todo-list-table">
@@ -38,7 +49,7 @@
     'track' is used to optimize the rendering of list items by tracking them with a unique identifier. 
     Helps to efficiently update the DOM when the list changes, as it can identify which items have been added, removed, or moved. 
     -->
-    @for (data of todoListStore.taskListing(); track data.id) {
+    @for (data of todoListStore.filteredTaskBasedOnStatus(); track data.id) {
     <tr>
       <td>{{ data.id }}</td>
       <td>{{ data.task }}</td>
