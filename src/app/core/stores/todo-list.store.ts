@@ -139,10 +139,10 @@ export const TodoListStore = signalStore(
         idOfTaskBeingEdited: null,
         frequencyIndex: frequency,
         taskStatistics: {
-          total: store.taskListing().length,
-          pending: store.taskListing().filter((data) => data.status === 'pending').length,
-          inProgress: store.taskListing().filter((data) => data.status === 'in-progress').length,
-          completed: store.taskListing().filter((data) => data.status === 'completed').length,
+          total: updatedTasksList.length,
+          pending: updatedTasksList.filter((data) => data.status === 'pending').length,
+          inProgress: updatedTasksList.filter((data) => data.status === 'in-progress').length,
+          completed: updatedTasksList.filter((data) => data.status === 'completed').length,
         },
       });
     },
