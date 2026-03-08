@@ -14,7 +14,6 @@ interface TTodoListState {
   isTaskEditingModalOpened: boolean;
   idOfTaskBeingEdited: string | null;
   loaded: boolean;
-  frequencyIndex: number;
   filteredStatus: "" | "pending" | "in-progress" | "completed";
 
   /** Task Statistics */
@@ -31,7 +30,6 @@ const initialState: TTodoListState = {
   isTaskEditingModalOpened: false,
   idOfTaskBeingEdited: null,
   loaded: false,
-  frequencyIndex: 0,
   filteredStatus: '',
   taskStatistics: {
     total: 0,
@@ -62,7 +60,6 @@ export const TodoListStore = signalStore(
 
       patchState(store, {
         taskListing: [...store.taskListing(), itemToAdd],
-        frequencyIndex: frequency,
         taskStatistics: {
           total: store.taskListing().length + 1,
           pending:
@@ -111,7 +108,6 @@ export const TodoListStore = signalStore(
       patchState(store, {
         taskListing: initialTasks,
         loaded: true,
-        frequencyIndex: initialTasks.length,
         taskStatistics: {
           total: initialTasks.length,
           pending: initialTasks.filter((data) => data.status === 'pending').length,
@@ -140,7 +136,6 @@ export const TodoListStore = signalStore(
         taskListing: updatedTasksList,
         isTaskEditingModalOpened: false,
         idOfTaskBeingEdited: null,
-        frequencyIndex: frequency,
         taskStatistics: {
           total: updatedTasksList.length,
           pending: updatedTasksList.filter((data) => data.status === 'pending').length,
